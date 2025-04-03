@@ -1,68 +1,66 @@
-<h2 class="titulo justify-content-center">¿Qué crédito necesitas?</h2>
-<div class="row">
-<div class="container col-6">
-  <div class="simulador-container">
+<h2 class="titulo mb-4 text-center">¿Qué crédito necesitas?</h2>
+<div class="d-flex flex-column align-items-center">
+  <label class="text-center mb-3 form-label fw-bold">Tipo de Crédito</label>
+  <select class="form-select text-center mb-3 w-auto" (change)="creditSelected($event)">
+    <option selected>---Seleccione el tipo de crédito---</option>
+    <option *ngFor="let item of creditoptions" [value]="item.value"  >{{item.label}}</option>
+  </select>
+</div>
+<div class="row g-4">
+  <div  *ngIf="form" class="col-lg-6">
+    <div class="simulador-container p-4 border rounded shadow-sm bg-white">
+      <p class="fw-semibold">
+        Ingresa los siguientes datos para empezar la simulación
+      </p>
 
-    <div class="mb-3">
-      <select class="form-select">
-        <option selected>Preciso</option>
-        <option>Otro tipo de crédito</option>
-      </select>
-    </div>
-
-    <p>Ingresa los siguientes datos para empezar la simulación</p>
-
-    <div class="mb-3">
-      <label class="form-label"
-        >¿Cuánto dinero necesitas que te prestemos?</label
-      >
-      <input type="number" class="form-control" placeholder="Ej. $1000" />
-      <small class="text-muted">Min. $300,00</small>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">¿En cuánto tiempo quieres pagarlo?</label>
-      <select class="form-select">
-        <option selected>Selecciona tu plazo</option>
-        <option>6 meses</option>
-        <option>12 meses</option>
-        <option>24 meses</option>
-      </select>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">¿Cómo quieres pagar tus intereses?</label>
-      <div class="d-flex gap-2">
-        <button class="btn btn-outline-primary btn-metodo">
-          Método Francés<br />Cuotas fijas en el tiempo
-        </button>
-        <button class="btn btn-outline-primary btn-metodo">
-          Método Alemán<br />Cuotas variables decrecientes
-        </button>
+      <div class="mb-3">
+        <label class="form-label fw-bold">¿Cuánto dinero necesitas?</label>
+        <input type="number" class="form-control" placeholder="Ej. $1000" />
+        <small class="text-muted">Min. $300,00</small>
       </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">¿En cuánto tiempo quieres pagarlo?</label>
+        <select class="form-select">
+          <option selected>Selecciona tu plazo</option>
+          <option>6 meses</option>
+          <option>12 meses</option>
+          <option>24 meses</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">¿Cómo quieres pagar tus intereses?</label>
+        <div class="d-flex flex-column flex-md-row gap-3">
+          <button class="btn btn-outline-primary w-100">
+            Método Francés<br /><small>Cuotas fijas en el tiempo</small>
+          </button>
+          <button class="btn btn-outline-primary w-100">
+            Método Alemán<br /><small>Cuotas variables decrecientes</small>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary w-100">Simular</button>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="simulador-container p-4 border rounded shadow-sm bg-light">
+      <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
+      <p class="text-center fs-4 fw-bold text-primary">$0,00</p>
+      <p class="text-center text-muted">
+        Durante 0 meses (0 años)<br />Con una tasa de interés referencial 0%
+      </p>
+      <h6 class="fw-bold">Detalle de tu crédito</h6>
+      <p>Capital: <strong>$0,00</strong></p>
+      <p>Total de interés: <strong>$0,00</strong></p>
+      <p>Total seguro de desgravamen: <strong>$0,00</strong></p>
+      <p>Total a pagar: <strong>$0,00</strong></p>
     </div>
 
-    <button class="btn btn-primary w-100">Simular</button>
+    <small class="text-muted d-block mt-3">
+      *Valores referenciales, no son considerados como una oferta formal de préstamo.
+    </small>
   </div>
-</div>
-
-<div class="container col-6 simulador-container">
-  <div class="mt-4 p-3 border rounded bg-light">
-    <h5 class="text-center">Tus pagos mensuales serán</h5>
-    <p class="text-center fs-4 fw-bold">$0,00</p>
-    <p class="text-center text-muted">
-      Durante 0 meses (0 años)<br />Con una tasa de interés referencial 0%
-    </p>
-    <h6>Detalle de tu crédito</h6>
-    <p>Capital: <strong>$0,00</strong></p>
-    <p>Total de interés: <strong>$0,00</strong></p>
-    <p>Total seguro de desgravamen: <strong>$0,00</strong></p>
-    <p>Total a pagar: <strong>$0,00</strong></p>
-  </div>
-
-  <small class="text-muted d-block mt-3">
-    *Valores referenciales, no son considerados como una oferta formal de
-    préstamo.
-  </small>
-</div>
 </div>
