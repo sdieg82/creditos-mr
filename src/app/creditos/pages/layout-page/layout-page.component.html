@@ -1,66 +1,150 @@
 <h2 class="titulo mb-4 text-center">¿Qué crédito necesitas?</h2>
-<div class="d-flex flex-column align-items-center">
-  <label class="text-center mb-3 form-label fw-bold">Tipo de Crédito</label>
-  <select class="form-select text-center mb-3 w-auto" (change)="creditSelected($event)">
-    <option selected>---Seleccione el tipo de crédito---</option>
-    <option *ngFor="let item of creditoptions" [value]="item.value"  >{{item.label}}</option>
-  </select>
-</div>
-<div class="row g-4">
-  <div  *ngIf="form" class="col-lg-6">
-    <div class="simulador-container p-4 border rounded shadow-sm bg-white">
-      <p class="fw-semibold">
-        Ingresa los siguientes datos para empezar la simulación
-      </p>
-
-      <div class="mb-3">
-        <label class="form-label fw-bold">¿Cuánto dinero necesitas?</label>
-        <input type="number" class="form-control" placeholder="Ej. $1000" />
-        <small class="text-muted">Min. $300,00</small>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label fw-bold">¿En cuánto tiempo quieres pagarlo?</label>
-        <select class="form-select">
-          <option selected>Selecciona tu plazo</option>
-          <option>6 meses</option>
-          <option>12 meses</option>
-          <option>24 meses</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label fw-bold">¿Cómo quieres pagar tus intereses?</label>
-        <div class="d-flex flex-column flex-md-row gap-3">
-          <button class="btn btn-outline-primary w-100">
-            Método Francés<br /><small>Cuotas fijas en el tiempo</small>
-          </button>
-          <button class="btn btn-outline-primary w-100">
-            Método Alemán<br /><small>Cuotas variables decrecientes</small>
-          </button>
-        </div>
-      </div>
-
-      <button class="btn btn-primary w-100">Simular</button>
-    </div>
+<form [formGroup]="creditForm" (ngSubmit)="credit()">
+  <div class="d-flex flex-column align-items-center">
+    <label class="text-center mb-3 form-label fw-bold">Tipo de Crédito</label>
+    <select
+      class="form-select text-center mb-3 w-auto"
+      (change)="creditSelected($event)"
+      formControlName="creditType"
+    >
+      <option value="">---Seleccione el tipo de crédito---</option>
+      <option *ngFor="let item of creditoptions" [value]="item.value">
+        {{ item.label }}
+      </option>
+    </select>
   </div>
 
-  <div class="col-lg-6">
-    <div class="simulador-container p-4 border rounded shadow-sm bg-light">
-      <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
-      <p class="text-center fs-4 fw-bold text-primary">$0,00</p>
-      <p class="text-center text-muted">
-        Durante 0 meses (0 años)<br />Con una tasa de interés referencial 0%
-      </p>
-      <h6 class="fw-bold">Detalle de tu crédito</h6>
-      <p>Capital: <strong>$0,00</strong></p>
-      <p>Total de interés: <strong>$0,00</strong></p>
-      <p>Total seguro de desgravamen: <strong>$0,00</strong></p>
-      <p>Total a pagar: <strong>$0,00</strong></p>
+  <div *ngIf="form" class="row g-4">
+    <div class="col-lg-6">
+      <div class="simulador-container p-4 border rounded shadow-sm bg-white">
+        <p class="fw-semibold">Ingresa los siguientes datos para empezar la simulación</p>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">¿Cuánto dinero necesitas?</label>
+          <input
+            type="number"
+            class="form-control"
+            placeholder="Ej. $1000"
+            formControlName="creditAmount"
+          />
+          <small class="text-muted">Min. $300,00</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">¿En cuánto tiempo quieres pagarlo?</label>
+          <select formControlName="creditPlazo" class="form-select">
+            <option value="">Selecciona tu plazo</option>
+            <option value="6">6 meses</option>
+            <option value="12">12 meses</option>
+            <option value="24">24 meses</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold">¿Cómo quieres pagar tus intereses?</label>
+          <div class="d-flex flex-column flex-md-row gap-3">
+            <button
+              type="button"
+              (click)="seleccionarMetodo('frances')"
+              [class.active]="creditForm.value.creditMethod === 'frances'"
+              class="btn btn-outline-primary w-100"
+            >
+              Método Francés<br /><small>Cuotas fijas en el tiempo</small>
+            </button>
+            <button
+              type="button"
+              (click)="seleccionarMetodo('aleman')"
+              [class.active]="creditForm.value.creditMethod === 'aleman'"
+              class="btn btn-outline-primary w-100"
+            >
+              Método Alemán<br /><small>Cuotas variables decrecientes</small>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Simular</button>
+      </div>
     </div>
 
-    <small class="text-muted d-block mt-3">
-      *Valores referenciales, no son considerados como una oferta formal de préstamo.
-    </small>
+    <div class="col-lg-6">
+      <div class="simulador-container p-4 border rounded shadow-sm bg-light">
+        <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
+        <p class="text-center fs-4 fw-bold text-primary">${{ A | number: '1.2-2' }}</p>
+        <p class="text-center text-muted">
+          Durante {{ creditForm.value.creditPlazo }} meses ({{ getPlazoEnAnios() | number:'1.0-0' }} años)<br />
+          Con una tasa de interés referencial 10%
+        </p>
+        
+
+        <h6 class="fw-bold">Detalle de tu crédito</h6>
+        <p>Capital: <strong>${{ creditForm.value.creditAmount || 0 | number: '1.2-2' }}</strong></p>
+        <p>Total de interés: <strong>${{ totalInteres | number: '1.2-2' }}</strong></p>
+        <p>Total seguro de desgravamen: <strong>$0,00</strong></p>
+        <p>Total a pagar: <strong>${{ totalPagar | number: '1.2-2' }}</strong></p>
+
+        <button
+          data-bs-toggle="modal"
+          data-bs-target="#exampleModal"
+          class="btn-outline-primary btn text-center mt-2"
+        >
+          Ver tabla de amortización
+        </button>
+      </div>
+
+      <small class="text-muted d-block mt-3">
+        *Valores referenciales, no son considerados como una oferta formal de préstamo.
+      </small>
+    </div>
+  </div>
+</form>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Tabla de amortización</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered table-sm">
+          <thead>
+            <tr>
+              <th>Mes</th>
+              <th>Cuota</th>
+              <th>Interés</th>
+              <th>Amortización</th>
+              <th>Saldo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of amortizationTable">
+              <td>{{ row.mes }}</td>
+              <td>${{ row.cuota | number: '1.2-2' }}</td>
+              <td>${{ row.interes | number: '1.2-2' }}</td>
+              <td>${{ row.amortizacion | number: '1.2-2' }}</td>
+              <td>${{ row.saldo | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="text-end fw-bold">Total a pagar</td>
+              <td>${{ amortizationTableTotal | number: '1.2-2' }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
