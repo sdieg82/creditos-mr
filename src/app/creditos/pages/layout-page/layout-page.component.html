@@ -1,5 +1,5 @@
 <h2 class="titulo mb-4 text-center">¿Qué crédito necesitas?</h2>
-<form [formGroup]="creditForm" (ngSubmit)="credit()">
+<form [formGroup]="creditForm">
   <div class="d-flex flex-column align-items-center">
     <label class="text-center mb-3 form-label fw-bold">Tipo de Crédito</label>
     <select
@@ -26,6 +26,7 @@
             class="form-control"
             placeholder="Ej. $1000"
             formControlName="creditAmount"
+            (input)="onInputChange($event)"
           />
           <small class="text-muted">Min. $300,00</small>
         </div>
@@ -33,10 +34,11 @@
         <div class="mb-3">
           <label class="form-label fw-bold">¿En cuánto tiempo quieres pagarlo?</label>
           <select formControlName="creditPlazo" class="form-select">
-            <option value="">Selecciona tu plazo</option>
-            <option value="6">6 meses</option>
-            <option value="12">12 meses</option>
-            <option value="24">24 meses</option>
+            <option value="">---Selecciona tu plazo---</option>
+            <option *ngFor="let plazo of creditPlazo" [value]="plazo.value">
+              {{ plazo.label }}
+            </option>
+           
           </select>
         </div>
 
@@ -45,16 +47,16 @@
           <div class="d-flex flex-column flex-md-row gap-3">
             <button
               type="button"
-              (click)="seleccionarMetodo('frances')"
-              [class.active]="creditForm.value.creditMethod === 'frances'"
+              (click)="seleccionarMetodo('Frances')"
+              [class.active]="creditForm.value.creditMethod === 'Frances'"
               class="btn btn-outline-primary w-100"
             >
               Método Francés<br /><small>Cuotas fijas en el tiempo</small>
             </button>
             <button
               type="button"
-              (click)="seleccionarMetodo('aleman')"
-              [class.active]="creditForm.value.creditMethod === 'aleman'"
+              (click)="seleccionarMetodo('Aleman')"
+              [class.active]="creditForm.value.creditMethod === 'Aleman'"
               class="btn btn-outline-primary w-100"
             >
               Método Alemán<br /><small>Cuotas variables decrecientes</small>
@@ -62,7 +64,7 @@
           </div>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Simular</button>
+        <button (click)="credit()" type="submit" class="btn btn-primary w-100">Simular</button>
       </div>
     </div>
 
