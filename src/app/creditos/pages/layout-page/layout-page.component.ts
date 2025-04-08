@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface AmortizationRow {
   mes: number;
@@ -128,4 +130,25 @@ export class LayoutPageComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const value = input.value.replace(/[^0-9]/g, '');
   }
+  descargarPDF() {
+    const doc = new jsPDF();
+  
+    doc.setFontSize(16);
+    doc.text('Tabla de Amortización', 14, 20);
+  
+    autoTable(doc, {
+      head: [['Mes', 'Cuota', 'Interés', 'Amortización', 'Saldo']],
+      body: this.amortizationTable.map(row => [
+        row.mes,
+        `$${row.cuota.toFixed(2)}`,
+        `$${row.interes.toFixed(2)}`,
+        `$${row.amortizacion.toFixed(2)}`,
+        `$${row.saldo.toFixed(2)}`
+      ]),
+      startY: 30,
+    });
+  
+    doc.save('tabla_amortizacion.pdf');
+  }
+  
 }
