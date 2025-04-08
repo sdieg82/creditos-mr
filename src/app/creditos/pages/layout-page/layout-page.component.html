@@ -35,10 +35,9 @@
           <label class="form-label fw-bold">¿En cuánto tiempo quieres pagarlo?</label>
           <select formControlName="creditPlazo" class="form-select">
             <option value="">---Selecciona tu plazo---</option>
-            <option *ngFor="let plazo of creditPlazo" [value]="plazo.value">
+            <option *ngFor="let plazo of creditMonthPlazo" [value]="plazo.value">
               {{ plazo.label }}
             </option>
-           
           </select>
         </div>
 
@@ -71,30 +70,49 @@
     <div class="col-lg-6">
       <div class="simulador-container p-4 border rounded shadow-sm bg-light">
         <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
-        <p class="text-center fs-4 fw-bold text-primary">${{ A | number: '1.2-2' }}</p>
-        <p class="text-center text-muted">
-          Durante {{ creditForm.value.creditPlazo }} meses ({{ getPlazoEnAnios() | number:'1.0-0' }} años)<br />
-          Con una tasa de interés referencial 10%
+        <!-- Mostrar la cuota A (puede ser la primera cuota si es alemán) -->
+        <p class="text-center fs-4 fw-bold text-primary">
+           ${{ A | number: '1.2-2' }}
+           <!-- Añadir aclaración si es Método Alemán -->
+           <small *ngIf="creditForm.value.creditMethod === 'Aleman' && A > 0" class="d-block text-muted fw-normal fs-6">(Primera cuota)</small>
         </p>
-        
+        <p class="text-center text-muted">
+          <!-- Mostrar plazo seleccionado -->
+          Durante {{ creditForm.value.creditPlazo || '0' }} meses
+          <!-- Mostrar años calculados -->
+          <span *ngIf="getPlazoEnAnios() > 0">({{ getPlazoEnAnios() | number:'1.0-0' }} año{{ getPlazoEnAnios() !== 1 ? 's' : '' }})</span><br />
+          <!-- Mostrar TASA DE INTERÉS DINÁMICA -->
+          Con una tasa de interés referencial {{ tasaInteresAnualMostrada | number: '1.2-2' }}%
+        </p>
 
-        <h6 class="fw-bold">Detalle de tu crédito</h6>
+
+        <h6 class="fw-bold mt-4">Detalle de tu crédito</h6>
+        <!-- Mantenemos el resto igual -->
         <p>Capital: <strong>${{ creditForm.value.creditAmount || 0 | number: '1.2-2' }}</strong></p>
         <p>Total de interés: <strong>${{ totalInteres | number: '1.2-2' }}</strong></p>
-        <p>Total seguro de desgravamen: <strong>$0,00</strong></p>
+        <p>Total seguro de desgravamen: <strong>$0,00</strong></p> <!-- Pendiente de implementar lógica -->
         <p>Total a pagar: <strong>${{ totalPagar | number: '1.2-2' }}</strong></p>
 
+        <!-- Habilitar el botón de ver tabla solo si hay datos -->
         <button
+          *ngIf="amortizationTable.length > 0"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
-          class="btn-outline-primary btn text-center mt-2"
+          class="btn-outline-primary btn text-center mt-3 w-100"
+        >
+          Ver tabla de amortización
+        </button>
+         <button
+          *ngIf="amortizationTable.length === 0"
+          disabled
+          class="btn-outline-secondary btn text-center mt-3 w-100"
         >
           Ver tabla de amortización
         </button>
       </div>
 
       <small class="text-muted d-block mt-3">
-        *Valores referenciales, no son considerados como una oferta formal de préstamo.
+        *Valores referenciales, no son considerados como una oferta formal de préstamo. La tasa de interés y condiciones finales pueden variar.
       </small>
     </div>
   </div>
