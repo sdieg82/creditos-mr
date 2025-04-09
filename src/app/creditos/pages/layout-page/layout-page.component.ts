@@ -134,9 +134,36 @@ export class LayoutPageComponent implements OnInit {
       // Puedes añadir tasas para otros tipos si es necesario
       // else if (creditType === 'consumo') { tasaAnual = 0.16; } // Ejemplo
     }
+
+    if (creditType === 'pymes') {
+      if (P >= 5000 && P <= 700000) {
+        tasaAnual = 0.11;
+      }
+      // Puedes añadir tasas para otros tipos si es necesario
+      // else if (creditType === 'consumo') { tasaAnual = 0.16; } // Ejemplo
+    }
+
+    if (creditType === 'microReactívate') {
+      if (P >= 3000 && P <= 30000) {
+        tasaAnual = 0.1399;
+      }
+    }
+
+    if (creditType === 'consumo') {
+      if (P >= 3000 && P <= 450000) {
+        tasaAnual = 0.1505;
+      }
+    }
+
+    if (creditType === 'vehicular') {
+      if (P >= 2000 && P <= 200000) {
+        tasaAnual = 0.1505;
+      }
+    }
+    
     // Actualiza la tasa para mostrar en la UI
     this.tasaInteresAnualMostrada = tasaAnual * 100;
-
+    console.log(this.tasaInteresAnualMostrada)
     // 2. Calcular Tasa Mensual
     const r = tasaAnual / 12;
 
@@ -322,6 +349,38 @@ export class LayoutPageComponent implements OnInit {
       else if (creditAmount >= 40001 && creditAmount <= 50000) maxMonths = 96;
       else if (creditAmount >= 50001 && creditAmount <= 200000) maxMonths = 120;
        // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
+    }
+
+    if (creditType === 'microReactívate') {
+      if (creditAmount >= 3000 && creditAmount <= 30000) maxMonths = 60;
+      
+       // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
+    }
+    if (creditType === 'consumo') {
+      if (creditAmount >= 200 && creditAmount <= 1000) maxMonths = 12;
+      else if (creditAmount >= 1001 && creditAmount <= 2000) maxMonths = 18;
+      else if (creditAmount >= 2001 && creditAmount <= 5000) maxMonths = 24;
+      else if (creditAmount >= 5001 && creditAmount <= 10000) maxMonths = 48;
+      else if (creditAmount >= 10001 && creditAmount <= 20000) maxMonths = 60;
+      else if (creditAmount >= 20001 && creditAmount <= 30000) maxMonths = 72;
+      else if (creditAmount >= 30001 && creditAmount <= 40000) maxMonths = 84;
+      else if (creditAmount >= 40001 && creditAmount <= 450000) maxMonths = 120;
+      // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
+    }
+
+    if (creditType === 'vehicular') {
+      if (creditAmount >= 2001 && creditAmount <= 5000) maxMonths = 24;
+      else if (creditAmount >= 5001 && creditAmount <= 10000) maxMonths = 48;
+      else if (creditAmount >= 10001 && creditAmount <= 20000) maxMonths = 60;
+      else if (creditAmount >= 20001 && creditAmount <= 40000) maxMonths = 72;
+      else if (creditAmount >= 40000 && creditAmount <= 200000) maxMonths = 120;
+      // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
+    }
+
+    if (creditType === 'pymes') {
+      if (creditAmount >= 5000 && creditAmount <= 40000) maxMonths = 48;
+      else if (creditAmount >= 50001 && creditAmount <= 700000) maxMonths = 144;
+      // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
 
     if (maxMonths > 0) {

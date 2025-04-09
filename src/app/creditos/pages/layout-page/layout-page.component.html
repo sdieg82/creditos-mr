@@ -48,7 +48,7 @@
               type="button"
               (click)="seleccionarMetodo('Frances')"
               [class.active]="creditForm.value.creditMethod === 'Frances'"
-              class="btn btn-outline-primary w-100"
+              class="btn btn-outline-success w-100"
             >
               Método Francés<br /><small>Cuotas fijas en el tiempo</small>
             </button>
@@ -56,14 +56,14 @@
               type="button"
               (click)="seleccionarMetodo('Aleman')"
               [class.active]="creditForm.value.creditMethod === 'Aleman'"
-              class="btn btn-outline-primary w-100"
+              class="btn btn-outline-success w-100"
             >
               Método Alemán<br /><small>Cuotas variables decrecientes</small>
             </button>
           </div>
         </div>
 
-        <button (click)="credit()" type="submit" class="btn btn-primary w-100">Simular</button>
+        <button (click)="credit()" type="submit" class="btn btn-success w-100">Simular</button>
       </div>
     </div>
 
@@ -71,7 +71,7 @@
       <div class="simulador-container p-4 border rounded shadow-sm bg-light">
         <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
         <!-- Mostrar la cuota A (puede ser la primera cuota si es alemán) -->
-        <p class="text-center fs-4 fw-bold text-primary">
+        <p class="text-center fs-4 fw-bold text-success">
            ${{ A | number: '1.2-2' }}
            <!-- Añadir aclaración si es Método Alemán -->
            <small *ngIf="creditForm.value.creditMethod === 'Aleman' && A > 0" class="d-block text-muted fw-normal fs-6">(Primera cuota)</small>
@@ -98,7 +98,7 @@
           *ngIf="amortizationTable.length > 0"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
-          class="btn-outline-primary btn text-center mt-3 w-100"
+          class="btn-outline-success btn text-center mt-3 w-100"
         >
           Ver tabla de amortización
         </button>
@@ -161,7 +161,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="descargarPDF()">
+        <button type="button" class="btn btn-success" (click)="descargarPDF()">
           Descargar PDF
         </button>
         
