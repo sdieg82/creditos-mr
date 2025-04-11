@@ -179,7 +179,7 @@ export class LayoutPageComponent implements OnInit {
     // Evita división por cero o NaN si r o n son 0 o inválidos
     if (metodo === 'Frances' && n > 0 && r > 0) {
          this.A = (P * r) / (1 - Math.pow(1 + r, -n));
-         console.log('este es la cuota',this.A)
+        //  console.log('este es la cuota',this.A)
     } else if (metodo === 'Frances') {
         this.A = (n > 0) ? P/n : 0; // Si la tasa es 0, es capital/plazo
     } else {
@@ -190,8 +190,8 @@ export class LayoutPageComponent implements OnInit {
     // 4. Generar Tabla de Amortización
     this.amortizationTable = [];
     let saldo = P;
-    console.log('este es el P',P)
-    console.log('este es el saldo',saldo)
+    // console.log('este es el P',P)
+    // console.log('este es el saldo',saldo)
     let interesTotalCalc = 0;
     let cuotaTotalCalc = 0;
     let totalSeguroCalc=0// Cambiado el nombre para evitar confusión con this.A
@@ -210,19 +210,21 @@ export class LayoutPageComponent implements OnInit {
           totalSeguro=totalSeguro+seguroMes
           saldoPendiente=saldo+seguroMes
           cuotaMes = this.A + seguroMes;
-          console.log('cuota mes',cuotaMes)
+          // console.log('cuota mes',cuotaMes)
           amortizacionMes = this.A - interesMes;
           P=P-amortizacionMes // Usar la cuota fija calculada
 
-          console.log('amortizacion mes',amortizacionMes)
-          console.log('saldo',P) // Ejemplo de cálculo de seguro, ajusta según sea necesario
+          // console.log('amortizacion mes',amortizacionMes)
+          // console.log('saldo',P) // Ejemplo de cálculo de seguro, ajusta según sea necesario
         } else { // Método Alemán
+          seguroMes=0.00041*saldo;
           amortizacionMes = P / n; // Amortización constante
-          console.log('amortizacion mes',amortizacionMes)
-          console.log('interes mes',interesMes)
-          console.log('seguro mes',seguroMes)
-          cuotaMes = amortizacionMes + interesMes + seguroMes; // Cuota variable
-          console.log('cuota mes',cuotaMes)
+          totalSeguro=totalSeguro+seguroMes
+          // console.log('amortizacion mes',amortizacionMes)
+          // console.log('interes mes',interesMes)
+          // console.log('seguro mes',seguroMes)
+          cuotaMes = amortizacionMes + interesMes + totalSeguro; // Cuota variable
+          // console.log('cuota mes',cuotaMes)
         }
 
         // Ajuste para la última cuota para que el saldo sea exactamente 0
