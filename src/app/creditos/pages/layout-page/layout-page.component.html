@@ -90,7 +90,7 @@
         <!-- Mantenemos el resto igual -->
         <p>Capital: <strong>${{ creditForm.value.creditAmount || 0 | number: '1.2-2' }}</strong></p>
         <p>Total de interés: <strong>${{ totalInteres | number: '1.2-2' }}</strong></p>
-        <p>Total seguro de desgravamen: <strong>$0,00</strong></p> <!-- Pendiente de implementar lógica -->
+        <p>Total seguro <strong>${{this.totalSeguro | number: '1.2-2' }}</strong></p> <!-- Pendiente de implementar lógica -->
         <p>Total a pagar: <strong>${{ totalPagar | number: '1.2-2' }}</strong></p>
 
         <!-- Habilitar el botón de ver tabla solo si hay datos -->

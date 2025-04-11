@@ -69,6 +69,7 @@ export class LayoutPageComponent implements OnInit {
   public A: number = 0; // Cuota mensual
   public totalInteres: number = 0;
   public totalPagar: number = 0;
+  public totalSeguro: number = 0;
   public amortizationTable: AmortizationRow[] = [];
   public amortizationTableTotal: number = 0;
   public tasaInteresAnualMostrada: number = 0; // Tasa de interés para mostrar en %
@@ -192,7 +193,8 @@ export class LayoutPageComponent implements OnInit {
     console.log('este es el P',P)
     console.log('este es el saldo',saldo)
     let interesTotalCalc = 0;
-    let cuotaTotalCalc = 0; // Cambiado el nombre para evitar confusión con this.A
+    let cuotaTotalCalc = 0;
+    let totalSeguroCalc=0// Cambiado el nombre para evitar confusión con this.A
 
     if (n > 0 && P > 0) { // Asegura que hay monto y plazo
       for (let i = 1; i <= n; i++) {
@@ -201,9 +203,11 @@ export class LayoutPageComponent implements OnInit {
         let cuotaMes = 0;
         let amortizacionMes = 0;
         let seguroMes = 0; // Si necesitas calcular seguro, puedes agregarlo aquí
-        let saldoPendiente = 0; // Inicializa saldo pendiente
+        let saldoPendiente = 0;
+        let totalSeguro = 0; // Inicializa el total de seguro
         if (metodo === 'Frances') {
           seguroMes=0.00041*saldo;
+          totalSeguro=totalSeguro+seguroMes
           saldoPendiente=saldo+seguroMes
           cuotaMes = this.A + seguroMes;
           console.log('cuota mes',cuotaMes)
@@ -252,6 +256,7 @@ export class LayoutPageComponent implements OnInit {
 
         interesTotalCalc += interesMes;
         cuotaTotalCalc += cuotaMes;
+        totalSeguroCalc += seguroMes; // Acumula el total de seguro
       }
       // saldo is already updated, no need to reassign P
     }
@@ -260,7 +265,8 @@ export class LayoutPageComponent implements OnInit {
     // 5. Actualizar Totales
     this.totalInteres = interesTotalCalc;
     this.totalPagar = cuotaTotalCalc;
-    this.amortizationTableTotal = cuotaTotalCalc; // Total en el pie de la tabla
+    this.amortizationTableTotal = cuotaTotalCalc;
+    this.totalSeguro=totalSeguroCalc // Total en el pie de la tabla
 
      // Si es Alemán, A no es la cuota fija, podríamos mostrar la primera cuota o nada
      if(metodo === 'Aleman' && this.amortizationTable.length > 0) {
