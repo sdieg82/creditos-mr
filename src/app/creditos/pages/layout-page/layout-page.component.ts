@@ -234,7 +234,7 @@ export class LayoutPageComponent implements OnInit {
                  cuotaMes = amortizacionMes + interesMes + seguroMes; // recalcular cuota final
                  this.A = cuotaMes; // Actualizar A si es la ultima cuota francesa (opcional visualmente)
             } else {
-                 cuotaMes = amortizacionMes + interesMes; // Recalcular cuota alemana final
+                 cuotaMes = amortizacionMes + interesMes + seguroMes; // Recalcular cuota alemana final
             }
             saldo = 0;
         } else {
