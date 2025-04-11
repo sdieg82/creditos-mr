@@ -338,7 +338,7 @@ export class LayoutPageComponent implements OnInit {
       head: [['No. de Cuotas', 'Fecha de pago', 'Capital', 'Interés', 'Seguro', 'Valor de la cuota', 'Saldo']],
       body: this.amortizationTable.map((row) => [
         row.mes,
-        'mes', // Puedes reemplazarlo con una fecha real si la calculas
+        `${row.fechaPago}`,
         `$${row.capital.toFixed(2)}`,
         `$${row.interes.toFixed(2)}`,
         `$${row.seguro.toFixed(2)}`,
