@@ -136,19 +136,23 @@
         <table class="table table-bordered table-sm">
           <thead>
             <tr>
-              <th>Mes</th>
-              <th>Cuota</th>
+              <th>No. de Cuotas</th>
+              <th>Fecha de pago</th>
+              <th>Capital</th>
               <th>Interés</th>
-              <th>Amortización</th>
+              <th>Seguro</th>
+              <th>Valor de la cuota</th>
               <th>Saldo</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let row of amortizationTable">
               <td>{{ row.mes }}</td>
-              <td>${{ row.cuota | number: '1.2-2' }}</td>
+              <td>mes</td>
+              <td>${{ row.capital | number: '1.2-2' }}</td>
               <td>${{ row.interes | number: '1.2-2' }}</td>
-              <td>${{ row.amortizacion | number: '1.2-2' }}</td>
+              <td>${{row.seguro  | number: '1.2-2'}}</td>
+              <td>${{ row.cuota | number: '1.2-2' }}</td>
               <td>${{ row.saldo | number: '1.2-2' }}</td>
             </tr>
           </tbody>

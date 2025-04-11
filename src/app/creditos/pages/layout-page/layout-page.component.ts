@@ -8,7 +8,8 @@ interface AmortizationRow {
   mes: number;
   cuota: number;
   interes: number;
-  amortizacion: number;
+  capital: number;
+  seguro: number;
   saldo: number;
 }
 
@@ -114,10 +115,13 @@ export class LayoutPageComponent implements OnInit {
       return;
     }
 
-    const P = Number(this.creditForm.get('creditAmount')?.value) || 0;
+    let P = Number(this.creditForm.get('creditAmount')?.value) || 0;
+    // console.log('este es el monto',P)
     const n = Number(this.creditForm.get('creditPlazo')?.value) || 0;
+    // console.log('este es el plazo anual',n)
     const metodo = this.creditForm.get('creditMethod')?.value || 'Frances'; // Asegura un valor
     const creditType = this.creditForm.get('creditType')?.value;
+    
 
     // 1. Determinar la Tasa de Interés Anual según las reglas
     let tasaAnual = 0.10; // Tasa por defecto si no es microcrédito o no cumple reglas
@@ -126,7 +130,7 @@ export class LayoutPageComponent implements OnInit {
     if (creditType === 'microcrédito') {
       if (P >= 1 && P <= 1000) {
         tasaAnual = 0.2250;
-      } else if (P >= 1001 && P <= 10000) { // Agrupado 1001-10000
+      } else if (P > 1000 && P <= 10000) { // Agrupado 1001-10000
         tasaAnual = 0.2150;
       } else if (P >= 10001 && P <= 200000) { // Agrupado 10001-200000
         tasaAnual = 0.1900;
@@ -150,9 +154,9 @@ export class LayoutPageComponent implements OnInit {
     }
 
     if (creditType === 'consumo') {
-      if (P >= 3000 && P <= 450000) {
+      if (P > 200 && P <= 450000) {
         tasaAnual = 0.1505;
-      }
+      } 
     }
 
     if (creditType === 'vehicular') {
@@ -163,14 +167,18 @@ export class LayoutPageComponent implements OnInit {
     
     // Actualiza la tasa para mostrar en la UI
     this.tasaInteresAnualMostrada = tasaAnual * 100;
-    console.log(this.tasaInteresAnualMostrada)
+    // console.log(this.tasaInteresAnualMostrada)
     // 2. Calcular Tasa Mensual
+    // console.log('tasa anual',tasaAnual)
     const r = tasaAnual / 12;
+    // console.log('este es la tasa mensual',r)
+
 
     // 3. Calcular Cuota (A) - Método Francés (si aplica)
     // Evita división por cero o NaN si r o n son 0 o inválidos
     if (metodo === 'Frances' && n > 0 && r > 0) {
          this.A = (P * r) / (1 - Math.pow(1 + r, -n));
+         console.log('este es la cuota',this.A)
     } else if (metodo === 'Frances') {
         this.A = (n > 0) ? P/n : 0; // Si la tasa es 0, es capital/plazo
     } else {
@@ -181,28 +189,43 @@ export class LayoutPageComponent implements OnInit {
     // 4. Generar Tabla de Amortización
     this.amortizationTable = [];
     let saldo = P;
+    console.log('este es el P',P)
+    console.log('este es el saldo',saldo)
     let interesTotalCalc = 0;
     let cuotaTotalCalc = 0; // Cambiado el nombre para evitar confusión con this.A
 
     if (n > 0 && P > 0) { // Asegura que hay monto y plazo
       for (let i = 1; i <= n; i++) {
+         // Asegura que el saldo inicial es P si no se ha modificado
         let interesMes = saldo * r;
         let cuotaMes = 0;
         let amortizacionMes = 0;
-
+        let seguroMes = 0; // Si necesitas calcular seguro, puedes agregarlo aquí
+        let saldoPendiente = 0; // Inicializa saldo pendiente
         if (metodo === 'Frances') {
-          cuotaMes = this.A; // Usar la cuota fija calculada
-          amortizacionMes = cuotaMes - interesMes;
+          seguroMes=0.00041*saldo;
+          saldoPendiente=saldo+seguroMes
+          cuotaMes = this.A + seguroMes;
+          console.log('cuota mes',cuotaMes)
+          amortizacionMes = this.A - interesMes;
+          P=P-amortizacionMes // Usar la cuota fija calculada
+
+          console.log('amortizacion mes',amortizacionMes)
+          console.log('saldo',P) // Ejemplo de cálculo de seguro, ajusta según sea necesario
         } else { // Método Alemán
           amortizacionMes = P / n; // Amortización constante
-          cuotaMes = amortizacionMes + interesMes;
+          console.log('amortizacion mes',amortizacionMes)
+          console.log('interes mes',interesMes)
+          console.log('seguro mes',seguroMes)
+          cuotaMes = amortizacionMes + interesMes + seguroMes; // Cuota variable
+          console.log('cuota mes',cuotaMes)
         }
 
         // Ajuste para la última cuota para que el saldo sea exactamente 0
         if (i === n) {
             amortizacionMes = saldo; // Lo que queda de saldo se amortiza
             if(metodo === 'Frances') {
-                 cuotaMes = amortizacionMes + interesMes; // recalcular cuota final
+                 cuotaMes = amortizacionMes + interesMes + seguroMes; // recalcular cuota final
                  this.A = cuotaMes; // Actualizar A si es la ultima cuota francesa (opcional visualmente)
             } else {
                  cuotaMes = amortizacionMes + interesMes; // Recalcular cuota alemana final
@@ -222,13 +245,15 @@ export class LayoutPageComponent implements OnInit {
           mes: i,
           cuota: cuotaMes,
           interes: interesMes,
-          amortizacion: amortizacionMes,
+          capital: amortizacionMes,
+          seguro: seguroMes,
           saldo: saldo,
         });
 
         interesTotalCalc += interesMes;
         cuotaTotalCalc += cuotaMes;
       }
+      // saldo is already updated, no need to reassign P
     }
 
 
@@ -299,7 +324,7 @@ export class LayoutPageComponent implements OnInit {
         row.mes,
         `$${row.cuota.toFixed(2)}`,
         `$${row.interes.toFixed(2)}`,
-        `$${row.amortizacion.toFixed(2)}`,
+        `$${row.capital.toFixed(2)}`,
         `$${row.saldo.toFixed(2)}`,
       ]),
       startY: 70, // Ajustar coordenada Y para empezar después del texto
