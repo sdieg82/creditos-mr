@@ -148,7 +148,7 @@
           <tbody>
             <tr *ngFor="let row of amortizationTable">
               <td>{{ row.mes }}</td>
-              <td>mes</td>
+              <td>{{row.fechaPago}}</td>
               <td>${{ row.capital | number: '1.2-2' }}</td>
               <td>${{ row.interes | number: '1.2-2' }}</td>
               <td>${{row.seguro  | number: '1.2-2'}}</td>

@@ -6,6 +6,7 @@ import autoTable from 'jspdf-autotable';
 
 interface AmortizationRow {
   mes: number;
+  fechaPago: string; // Cambiado a string para formatear la fecha
   cuota: number;
   interes: number;
   capital: number;
@@ -122,7 +123,8 @@ export class LayoutPageComponent implements OnInit {
     // console.log('este es el plazo anual',n)
     const metodo = this.creditForm.get('creditMethod')?.value || 'Frances'; // Asegura un valor
     const creditType = this.creditForm.get('creditType')?.value;
-    
+    const fechaInicio = new Date(); // O la fecha que desees como inicio
+    const fechaPago = new Date(fechaInicio); // Copiamos la fecha
 
     // 1. Determinar la Tasa de Interés Anual según las reglas
     let tasaAnual = 0.10; // Tasa por defecto si no es microcrédito o no cumple reglas
@@ -246,9 +248,16 @@ export class LayoutPageComponent implements OnInit {
         if (saldo < 0.005 && saldo > -0.005) {
             saldo = 0;
         }
-
+        const fechaCuota = new Date(fechaPago);
+        fechaCuota.setMonth(fechaCuota.getMonth() + i);
+      
+        // Formateamos la fecha (por ejemplo, "11 abril 2025")
+        const opcionesFormato = { day: '2-digit', month: 'long', year: 'numeric' } as const;
+        const fechaFormateada = fechaCuota.toLocaleDateString('es-ES', opcionesFormato);
+      
         this.amortizationTable.push({
           mes: i,
+          fechaPago:fechaFormateada,
           cuota: cuotaMes,
           interes: interesMes,
           capital: amortizacionMes,
@@ -304,19 +313,18 @@ export class LayoutPageComponent implements OnInit {
 
   descargarPDF() {
     if (this.amortizationTable.length === 0) return; // No descargar si no hay tabla
-
+  
     const doc = new jsPDF();
     const P = Number(this.creditForm.get('creditAmount')?.value) || 0;
     const n = Number(this.creditForm.get('creditPlazo')?.value) || 0;
     const metodo = this.creditForm.get('creditMethod')?.value || 'N/A';
     const tipoCredito = this.creditoptions.find(opt => opt.value === this.creditForm.get('creditType')?.value)?.label || 'N/A';
-
-
+  
     doc.setFontSize(18);
     doc.text('Simulación de Crédito', 14, 22);
     doc.setFontSize(11);
     doc.setTextColor(100);
-
+  
     // Información del crédito
     doc.text(`Tipo de Crédito: ${tipoCredito}`, 14, 32);
     doc.text(`Monto Solicitado: $${P.toFixed(2)}`, 14, 38);
@@ -324,31 +332,36 @@ export class LayoutPageComponent implements OnInit {
     doc.text(`Método Amortización: ${metodo}`, 14, 50);
     doc.text(`Tasa Interés Anual: ${this.tasaInteresAnualMostrada.toFixed(2)}%`, 14, 56);
     doc.text(`Cuota Mensual Referencial: $${this.A.toFixed(2)} ${metodo === 'Aleman' ? '(Primera Cuota)' : ''}`, 14, 62);
-
-
+  
+    // Tabla de amortización con todas las columnas
     autoTable(doc, {
-      head: [['Mes', 'Cuota', 'Interés', 'Amortización', 'Saldo']],
+      head: [['No. de Cuotas', 'Fecha de pago', 'Capital', 'Interés', 'Seguro', 'Valor de la cuota', 'Saldo']],
       body: this.amortizationTable.map((row) => [
         row.mes,
-        `$${row.cuota.toFixed(2)}`,
-        `$${row.interes.toFixed(2)}`,
+        'mes', // Puedes reemplazarlo con una fecha real si la calculas
         `$${row.capital.toFixed(2)}`,
-        `$${row.saldo.toFixed(2)}`,
+        `$${row.interes.toFixed(2)}`,
+        `$${row.seguro.toFixed(2)}`,
+        `$${row.cuota.toFixed(2)}`,
+        `$${row.saldo.toFixed(2)}`
       ]),
-      startY: 70, // Ajustar coordenada Y para empezar después del texto
+      startY: 70,
       theme: 'grid',
-      headStyles: { fillColor: [22, 160, 133] }, // Ejemplo de color de cabecera
+      headStyles: { fillColor: [22, 160, 133] },
+      styles: {
+        fontSize: 9,
+      },
     });
-
-    // Añadir totales al final del PDF después de la tabla
-    let finalY = (doc as any).lastAutoTable.finalY; // Obtener la posición Y final de la tabla
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Total Intereses: $${this.totalInteres.toFixed(2)}`, 14, finalY + 10);
-    doc.text(`Total a Pagar: $${this.totalPagar.toFixed(2)}`, 14, finalY + 16);
-
-    doc.save('tabla_amortizacion.pdf');
+  
+    // Total al final
+    const finalY = (doc as any).lastAutoTable.finalY + 10;
+    doc.setFontSize(11);
+    doc.text(`Total a pagar: $${this.amortizationTableTotal.toFixed(2)}`, 14, finalY);
+  
+    // Guardar
+    doc.save('simulacion_credito.pdf');
   }
+  
 
   // --- Funciones Auxiliares ---
 
