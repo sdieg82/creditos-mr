@@ -74,7 +74,9 @@ export class LayoutPageComponent implements OnInit {
   public amortizationTable: AmortizationRow[] = [];
   public amortizationTableTotal: number = 0;
   public tasaInteresAnualMostrada: number = 0; // Tasa de interés para mostrar en %
-
+  public errorMessage: string = ''; // Mensaje de error si es necesario
+  public errorMsg:boolean = false; // Variable para mostrar el mensaje de error
+  public rango:string=''; // Variable para mostrar el rango de monto permitido
   ngOnInit(): void {
     // Escucha cambios en tipo y monto para actualizar plazos y tasa
     this.creditForm
@@ -131,19 +133,42 @@ export class LayoutPageComponent implements OnInit {
     this.tasaInteresAnualMostrada = 10; // Por defecto en %
 
     if (creditType === 'microcrédito') {
+      this.rango="Mínimo 300 y Máximo 200000"
       if (P >= 1 && P <= 1000) {
         tasaAnual = 0.2250;
       } else if (P > 1000 && P <= 10000) { // Agrupado 1001-10000
         tasaAnual = 0.2150;
-      } else if (P >= 10001 && P <= 200000) { // Agrupado 10001-200000
+      } else if (P >= 10001 && P < 200000) { // Agrupado 10001-200000
         tasaAnual = 0.1900;
+      }else if (P > 200000 ) { // Agrupado 10001-200000
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000);
       }
+
       // Puedes añadir tasas para otros tipos si es necesario
       // else if (creditType === 'consumo') { tasaAnual = 0.16; } // Ejemplo
     }
 
     if (creditType === 'pymes') {
-      if (P >= 5000 && P <= 700000) {
+      
+      this.rango="Mínimo 5000 y Máximo 700000"
+      if (P <5000 || P >= 700000) {
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000); 
+      }
+      else if (P >= 5000 && P <= 700000) {
         tasaAnual = 0.11;
       }
       // Puedes añadir tasas para otros tipos si es necesario
@@ -151,19 +176,54 @@ export class LayoutPageComponent implements OnInit {
     }
 
     if (creditType === 'microReactívate') {
-      if (P >= 3000 && P <= 50000) {
+      this.rango="Mínimo 3000 y Máximo 50000"
+      if (P <3000 || P >= 50000) {
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000);
+      }
+      else if (P >= 3000 && P <= 50000) {
         tasaAnual = 0.1399;
       }
     }
 
     if (creditType === 'consumo') {
+      this.rango="Mínimo 300 y Máximo 450000"
+      if(P <300 || P >= 450000) {
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000);
+      }
       if (P > 200 && P <= 450000) {
         tasaAnual = 0.1505;
       } 
     }
 
     if (creditType === 'vehicular') {
-      if (P >= 2000 && P <= 200000) {
+      
+      this.rango="Mínimo 2000 y Máximo 200000"
+      if(P <2001 || P >= 200000) {
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000);
+       
+
+      }else if (P >= 2000 && P <= 200000) {
         tasaAnual = 0.1505;
       }
     }
@@ -451,6 +511,8 @@ export class LayoutPageComponent implements OnInit {
 
    // Limpia los resultados de la simulación anterior
   resetSimulationResults() {
+    this.errorMsg=false
+    
     this.A = 0;
     this.totalInteres = 0;
     this.totalPagar = 0;
