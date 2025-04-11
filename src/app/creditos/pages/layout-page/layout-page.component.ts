@@ -149,7 +149,7 @@ export class LayoutPageComponent implements OnInit {
     }
 
     if (creditType === 'microReactívate') {
-      if (P >= 3000 && P <= 30000) {
+      if (P >= 3000 && P <= 50000) {
         tasaAnual = 0.1399;
       }
     }
