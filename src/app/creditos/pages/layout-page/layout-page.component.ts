@@ -77,6 +77,9 @@ export class LayoutPageComponent implements OnInit {
   public errorMessage: string = ''; // Mensaje de error si es necesario
   public errorMsg:boolean = false; // Variable para mostrar el mensaje de error
   public rango:string=''; // Variable para mostrar el rango de monto permitido
+  public cuotaFija: number = 0; // Cuota fija para mostrar en la UI
+  public aleman:boolean=false // Variable para mostrar el metodo de amortizacion aleman
+  public frances:boolean=true // Variable para mostrar el metodo de amortizacion frances
   ngOnInit(): void {
     // Escucha cambios en tipo y monto para actualizar plazos y tasa
     this.creditForm
@@ -234,12 +237,19 @@ export class LayoutPageComponent implements OnInit {
     // 3. Calcular Cuota (A) - Método Francés (si aplica)
     // Evita división por cero o NaN si r o n son 0 o inválidos
     if (metodo === 'Frances' && n > 0 && r > 0) {
+      this.aleman=false
+      this.frances=true
+      console.log("prestamo",P)
+      console.log("interes por mes",r)
+      console.log("cuota a pagar",this.A)
          this.A = (P * r) / (1 - Math.pow(1 + r, -n));
         //  console.log('este es la cuota',this.A)
     } else if (metodo === 'Frances') {
         this.A = (n > 0) ? P/n : 0; // Si la tasa es 0, es capital/plazo
     } else {
-        this.A = 0; // Para Alemán, la cuota varía, A no es la cuota fija
+      this.frances=false
+      this.aleman=true  
+      this.A = 0; // Para Alemán, la cuota varía, A no es la cuota fija
     }
 
 
@@ -288,6 +298,7 @@ export class LayoutPageComponent implements OnInit {
             amortizacionMes = saldo; // Lo que queda de saldo se amortiza
             if(metodo === 'Frances') {
                  cuotaMes = amortizacionMes + interesMes + seguroMes; // recalcular cuota final
+                 this.cuotaFija=amortizacionMes+interesMes
                  this.A = cuotaMes; // Actualizar A si es la ultima cuota francesa (opcional visualmente)
             } else {
                  cuotaMes = amortizacionMes + interesMes + seguroMes; // Recalcular cuota alemana final
@@ -335,7 +346,8 @@ export class LayoutPageComponent implements OnInit {
 
      // Si es Alemán, A no es la cuota fija, podríamos mostrar la primera cuota o nada
      if(metodo === 'Aleman' && this.amortizationTable.length > 0) {
-        this.A = this.amortizationTable[0].cuota; // Muestra la primera cuota alemana como referencia
+        this.A = this.amortizationTable[0].cuota;
+        this.cuotaFija=this.amortizationTable[0].capital +this.amortizationTable[0].interes // Muestra la primera cuota alemana como referencia
      } else if (metodo !== 'Frances') {
         this.A = 0; // No mostrar cuota fija si no es francés
      }
@@ -519,5 +531,17 @@ export class LayoutPageComponent implements OnInit {
     this.amortizationTable = [];
     this.amortizationTableTotal = 0;
     this.tasaInteresAnualMostrada = 0; // También resetea la tasa mostrada
+  }
+
+  resetAll(){
+    this.creditForm.reset(); // Resetea el formulario
+    this.creditMonthPlazo = [...this.defaultCreditPlazo]; // Resetea los plazos a los por defecto
+    this.resetSimulationResults(); // Limpia resultados de la simulación
+    this.form = false; // Resetea el estado del formulario
+    this.errorMsg=false // Resetea el mensaje de error
+    this.rango='' // Resetea el rango de monto permitido
+    this.cuotaFija=0 // Resetea la cuota fija para mostrar en la UI
+    this.aleman=false // Resetea el metodo de amortizacion aleman
+    this.frances=true // Resetea el metodo de amortizacion frances
   }
 }

@@ -67,6 +67,7 @@
         </div>
 
         <button (click)="credit()" type="submit" class="btn btn-success w-100">Simular</button>
+        <button (click)="resetAll()" class=" mt-2 btn btn-danger w-100" >Resetear simulacro</button>
       </div>
     </div>
 
@@ -77,11 +78,16 @@
         </div>
         <h5 class="text-center fw-bold">Tus pagos mensuales serán</h5>
         <!-- Mostrar la cuota A (puede ser la primera cuota si es alemán) -->
-        <p class="text-center fs-4 fw-bold text-success">
-           ${{ A | number: '1.2-2' }}
+        <p *ngIf="frances" class="text-center fs-4 fw-bold text-success">
+           ${{ cuotaFija || A | number: '1.2-2' }}
            <!-- Añadir aclaración si es Método Alemán -->
            <small *ngIf="creditForm.value.creditMethod === 'Aleman' && A > 0" class="d-block text-muted fw-normal fs-6">(Primera cuota)</small>
         </p>
+        <p *ngIf="aleman" class="text-center fs-4 fw-bold text-success">
+          ${{ cuotaFija | number: '1.2-2' }}
+          <!-- Añadir aclaración si es Método Alemán -->
+          <small *ngIf="creditForm.value.creditMethod === 'Aleman' && A > 0" class="d-block text-muted fw-normal fs-6">(Primera cuota)</small>
+       </p>
         <p class="text-center text-muted">
           <!-- Mostrar plazo seleccionado -->
           Durante {{ creditForm.value.creditPlazo || '0' }} meses
