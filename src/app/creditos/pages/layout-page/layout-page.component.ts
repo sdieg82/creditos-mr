@@ -80,6 +80,7 @@ export class LayoutPageComponent implements OnInit {
   public cuotaFija: number = 0; // Cuota fija para mostrar en la UI
   public aleman:boolean=false // Variable para mostrar el metodo de amortizacion aleman
   public frances:boolean=true // Variable para mostrar el metodo de amortizacion frances
+  public primeraCuota:number=0 // Variable para mostrar la primera cuota francesa
   ngOnInit(): void {
     // Escucha cambios en tipo y monto para actualizar plazos y tasa
     this.creditForm
@@ -241,11 +242,11 @@ export class LayoutPageComponent implements OnInit {
       this.frances=true
       console.log("prestamo",P)
       console.log("interes por mes",r)
-      console.log("cuota a pagar",this.A)
          this.A = (P * r) / (1 - Math.pow(1 + r, -n));
-        //  console.log('este es la cuota',this.A)
+         console.log('este es la cuota',this.A)
     } else if (metodo === 'Frances') {
         this.A = (n > 0) ? P/n : 0; // Si la tasa es 0, es capital/plazo
+        // console.log('entra por el if',this.A) 
     } else {
       this.frances=false
       this.aleman=true  
@@ -276,7 +277,14 @@ export class LayoutPageComponent implements OnInit {
           totalSeguro=totalSeguro+seguroMes
           saldoPendiente=saldo+seguroMes
           cuotaMes = this.A + seguroMes;
-          // console.log('cuota mes',cuotaMes)
+          if(i === 1) { // Si es la primera cuota, guarda el valor
+            this.aleman=false
+            this.frances=true
+            this.primeraCuota=cuotaMes // Guarda la primera cuota para mostrarla
+             // Guarda el valor de la cuota fija
+          }
+
+          console.log('cuota mes',cuotaMes)
           amortizacionMes = this.A - interesMes;
           P=P-amortizacionMes // Usar la cuota fija calculada
 
@@ -297,10 +305,13 @@ export class LayoutPageComponent implements OnInit {
         if (i === n) {
             amortizacionMes = saldo; // Lo que queda de saldo se amortiza
             if(metodo === 'Frances') {
-                 cuotaMes = amortizacionMes + interesMes + seguroMes; // recalcular cuota final
+              console.log(amortizacionMes)   
+              cuotaMes = amortizacionMes + interesMes + seguroMes; // recalcular cuota final
+                 console.log('cuota final',cuotaMes)
                  this.cuotaFija=amortizacionMes+interesMes
                  this.A = cuotaMes; // Actualizar A si es la ultima cuota francesa (opcional visualmente)
-            } else {
+                 console.log('cuota fija',this.A)
+                } else {
                  cuotaMes = amortizacionMes + interesMes + seguroMes; // Recalcular cuota alemana final
             }
             saldo = 0;
