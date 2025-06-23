@@ -178,7 +178,7 @@ export class LayoutPageComponent implements OnInit {
     }
 
     if (creditType === 'microReactívate') {
-      if (P <3000 || P >= 50000) {
+      if (P <3000 || P > 50000) {
         this.errorMsg=true
         this.A = 0; // Si no cumple, no calculamos cuota
         P=0
@@ -274,8 +274,7 @@ export class LayoutPageComponent implements OnInit {
         let totalSeguro = 0; // Inicializa el total de seguro
         if (metodo === 'Frances') {
           seguroMes=0.00041*saldo;
-          totalSeguro=totalSeguro+seguroMes
-          saldoPendiente=saldo+seguroMes
+      
           cuotaMes = this.A + seguroMes;
           if(i === 1) { // Si es la primera cuota, guarda el valor
             this.aleman=false
@@ -477,7 +476,7 @@ export class LayoutPageComponent implements OnInit {
 
     if (creditType === 'microReactívate') {
       this.rango="Mínimo 3000 y Máximo 50000"
-      if (creditAmount >= 3000 && creditAmount <= 30000) maxMonths = 60;
+      if (creditAmount >= 3000 && creditAmount <= 50000) maxMonths = 60;
       
        // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
