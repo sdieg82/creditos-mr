@@ -138,11 +138,11 @@ export class LayoutPageComponent implements OnInit {
 
     if (creditType === 'microcrédito') {
       if (P >= 1 && P <= 1000) {
-        tasaAnual = 0.2250;
+        tasaAnual = 0.2150;
       } else if (P > 1000 && P <= 10000) { // Agrupado 1001-10000
         tasaAnual = 0.2150;
-      } else if (P >= 10001 && P < 200000) { // Agrupado 10001-200000
-        tasaAnual = 0.1900;
+      } else if (P >= 10001 && P < 100000) { // Agrupado 10001-200000
+        tasaAnual = 0.2150;
       }else if (P > 200000 ) { // Agrupado 10001-200000
         this.errorMsg=true
         this.A = 0; // Si no cumple, no calculamos cuota
@@ -171,14 +171,14 @@ export class LayoutPageComponent implements OnInit {
         }, 4000); 
       }
       else if (P >= 5000 && P <= 700000) {
-        tasaAnual = 0.11;
+        tasaAnual = 0.1050;
       }
       // Puedes añadir tasas para otros tipos si es necesario
       // else if (creditType === 'consumo') { tasaAnual = 0.16; } // Ejemplo
     }
 
     if (creditType === 'microReactívate') {
-      if (P <3000 || P > 50000) {
+      if (P <5000 || P > 100000) {
         this.errorMsg=true
         this.A = 0; // Si no cumple, no calculamos cuota
         P=0
@@ -189,7 +189,7 @@ export class LayoutPageComponent implements OnInit {
         }, 4000);
       }
       else if (P >= 3000 && P <= 50000) {
-        tasaAnual = 0.1399;
+        tasaAnual = 0.1499;
       }
     }
 
@@ -467,17 +467,19 @@ export class LayoutPageComponent implements OnInit {
       else if (creditAmount >= 1001 && creditAmount <= 2000) maxMonths = 24;
       else if (creditAmount >= 2001 && creditAmount <= 5000) maxMonths = 36;
       else if (creditAmount >= 5001 && creditAmount <= 10000) maxMonths = 60;
-      else if (creditAmount >= 10001 && creditAmount <= 30000) maxMonths = 72;
-      else if (creditAmount >= 30001 && creditAmount <= 40000) maxMonths = 84;
+      else if (creditAmount >= 10001 && creditAmount <= 40000) maxMonths = 84;
       else if (creditAmount >= 40001 && creditAmount <= 50000) maxMonths = 96;
-      else if (creditAmount >= 50001 && creditAmount <= 200000) maxMonths = 120;
+      else if (creditAmount >= 50001 && creditAmount <= 100000) maxMonths = 120;
        // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
 
     if (creditType === 'microReactívate') {
-      this.rango="Mínimo 3000 y Máximo 50000"
-      if (creditAmount >= 3000 && creditAmount <= 50000) maxMonths = 60;
-      
+      this.rango="Mínimo 5000 y Máximo 100000"
+      if (creditAmount >=5000 && creditAmount <= 10000) maxMonths = 60;
+      else if (creditAmount >=10000 && creditAmount <= 30000) maxMonths = 72;
+      else if (creditAmount >=30001 && creditAmount <= 40000) maxMonths = 84;
+      else if (creditAmount >=40001 && creditAmount <= 50000) maxMonths = 96;
+      else if (creditAmount >=50001 && creditAmount <= 100000) maxMonths = 120;
        // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
     if (creditType === 'consumo') {
@@ -507,6 +509,8 @@ export class LayoutPageComponent implements OnInit {
     if (creditType === 'pymes') {
       this.rango="Mínimo 5000 y Máximo 700000"
       if (creditAmount >= 5000 && creditAmount <= 40000) maxMonths = 48;
+      else if (creditAmount >= 40001 && creditAmount <= 45000) maxMonths = 60;
+      else if (creditAmount >= 45001 && creditAmount <= 50000) maxMonths = 72;
       else if (creditAmount >= 50001 && creditAmount <= 700000) maxMonths = 144;
       // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
