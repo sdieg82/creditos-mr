@@ -40,11 +40,12 @@ export class LayoutPageComponent implements OnInit {
 
   // Opciones de tipo de crédito
   public creditoptions = [
+    { value: 'consumo', label: 'Consumo' },
     { value: 'microcrédito', label: 'Microcrédito' },
     { value: 'microReactívate', label: 'Microcrédito Reactívate' }, // Considera si necesita reglas propias
-    { value: 'consumo', label: 'Consumo' },
-    { value: 'vehicular', label: 'Vehicular' },
     { value: 'pymes', label: 'PYMES' },
+    { value: 'vehicular', label: 'Vehicular' },
+    { value: 'vivienda', label: 'Vivienda' },
   ];
 
   // Plazos por defecto (para tipos de crédito que no sean microcrédito o fuera de rangos)
@@ -223,6 +224,23 @@ export class LayoutPageComponent implements OnInit {
 
       }else if (P >= 2000 && P <= 200000) {
         tasaAnual = 0.1505;
+      }
+    }
+    //TODO VIVIENDA
+    if (creditType === 'vivienda') {
+      if(P <91372 || P >450000) {
+        this.errorMessage = 'Monto fuera de rango para el crédito seleccionado'; // Mensaje de error
+        this.errorMsg=true
+        this.A = 0; // Si no cumple, no calculamos cuota
+        P=0
+        console.log('Monto fuera de rango para microcrédito');
+        setTimeout(() => {
+          this.errorMsg=false
+        }, 4000);
+       
+
+      }else if (P >= 91372 && P <= 450000) {
+        tasaAnual = 0.0980;
       }
     }
     
@@ -512,6 +530,12 @@ export class LayoutPageComponent implements OnInit {
       else if (creditAmount >= 40001 && creditAmount <= 45000) maxMonths = 60;
       else if (creditAmount >= 45001 && creditAmount <= 50000) maxMonths = 72;
       else if (creditAmount >= 50001 && creditAmount <= 700000) maxMonths = 144;
+      // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
+    }
+    //TODO VIVIENDA
+    if (creditType === 'vivienda') {
+      this.rango="Mínimo 91372 y Máximo 450000"
+      if (creditAmount >= 91372 && creditAmount <= 450000) maxMonths = 240;
       // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
 
