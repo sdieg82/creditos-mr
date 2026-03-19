@@ -487,7 +487,7 @@ export class LayoutPageComponent implements OnInit {
       else if (creditAmount >= 5001 && creditAmount <= 10000) maxMonths = 60;
       else if (creditAmount >= 10001 && creditAmount <= 40000) maxMonths = 84;
       else if (creditAmount >= 40001 && creditAmount <= 50000) maxMonths = 96;
-      else if (creditAmount >= 50001 && creditAmount <= 100000) maxMonths = 120;
+      else if (creditAmount >= 50001 && creditAmount <= 200000) maxMonths = 120;
        // Si es > 200000 o 0, usamos default (o podrías definir un maxMonths aquí también)
     }
 
