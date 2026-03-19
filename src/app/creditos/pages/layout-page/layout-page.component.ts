@@ -140,10 +140,10 @@ export class LayoutPageComponent implements OnInit {
     if (creditType === 'microcrédito') {
       if (P >= 1 && P <= 1000) {
         tasaAnual = 0.2150;
-      } else if (P > 1000 && P <= 10000) { // Agrupado 1001-10000
+      } else if (P > 1000 && P <= 4999) { // Agrupado 1001-10000
         tasaAnual = 0.2150;
-      } else if (P >= 10001 && P < 100000) { // Agrupado 10001-200000
-        tasaAnual = 0.2150;
+      } else if (P >= 5000 && P <= 200000) { // Agrupado 10001-200000
+        tasaAnual = 0.1900;
       }else if (P > 200000 ) { // Agrupado 10001-200000
         this.errorMsg=true
         this.A = 0; // Si no cumple, no calculamos cuota
