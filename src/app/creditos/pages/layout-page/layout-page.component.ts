@@ -189,7 +189,7 @@ export class LayoutPageComponent implements OnInit {
           this.errorMsg=false
         }, 4000);
       }
-      else if (P >= 3000 && P <= 50000) {
+      else if (P >= 3000 && P <= 100000) {
         tasaAnual = 0.1499;
       }
     }
